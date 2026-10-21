@@ -66,9 +66,9 @@ main{max-width:1180px;margin:0 auto;padding:14px 16px 80px}
 .meta{padding:10px 10px 6px;flex:1}
 .cat{font-size:.72rem;font-weight:700;color:var(--accent)}
 .ttl{font-size:.95rem;font-weight:700;line-height:1.35;margin-top:2px}
-.acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 10px}
-.mini{padding:9px 0;border-radius:10px;font-size:.85rem;font-weight:700;background:var(--accent-soft);color:var(--accent)}
-.mini.k{background:var(--kakao);color:var(--kakao-ink)}
+.acts{display:grid;grid-template-columns:auto 1fr;gap:6px;padding:0 10px 10px}
+.mini{padding:9px 10px;white-space:nowrap;min-width:0;letter-spacing:-.02em;border-radius:10px;font-size:.85rem;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.mini.k{background:var(--kakao);color:var(--kakao-ink);padding:9px 4px}
 .empty{text-align:center;color:var(--ink2);padding:60px 0}
 
 /* detail */
@@ -102,6 +102,16 @@ main{max-width:1180px;margin:0 auto;padding:14px 16px 80px}
 .btn.save{background:var(--paper);border:1.5px solid var(--line)}
 .note{font-size:.82rem;color:var(--ink2);margin:10px 2px 0;line-height:1.5}
 
+/* share fallback */
+.fb{position:fixed;inset:0;z-index:70;display:none;align-items:flex-end;justify-content:center;background:rgba(18,14,22,.55)}
+.fb.open{display:flex}
+.fbox{background:var(--paper);width:min(520px,100%);border-radius:20px 20px 0 0;padding:20px 16px calc(18px + env(safe-area-inset-bottom))}
+@media(min-width:600px){.fb{align-items:center}.fbox{border-radius:20px}}
+.fbox h3{margin:0 0 6px;font-size:1.15rem}
+.fbox p{margin:0 0 14px;color:var(--ink2);font-size:.92rem}
+.fbox .btn{width:100%;margin-bottom:8px;border:1.5px solid var(--line);background:#fff}
+.fbox .btn.go{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fbox .btn.close{background:none;border:0;color:var(--ink2);margin:0}
 /* toast */
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:.95rem;z-index:99;transition:.25s;max-width:min(92vw,460px);text-align:center;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.25)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -116,7 +126,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
     <div class="eyebrow">PROMPT BOOK · 교안</div>
     <h1>AI 프롬프트북 <b>505</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
-    <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 텍스트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
+    <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
   </div>
 </header>
 
@@ -166,6 +176,14 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
   </div>
 </div>
 
+<div class="fb" id="fb" role="dialog" aria-modal="true">
+  <div class="fbox">
+    <h3>이 화면에서는 바로 공유가 안 돼요</h3>
+    <p id="fbMsg"></p>
+    <div id="fbBtns"></div>
+    <button class="btn close" id="fbClose">닫기</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <button class="totop" id="totop" aria-label="맨 위로">↑</button>
 
@@ -205,13 +223,53 @@ async function copyText(text, silent){
 }
 
 /* ---------- share (no URL is ever passed) ---------- */
-async function shareText(text){
-  if(navigator.share){
+const UA = navigator.userAgent || '';
+const IS_KAKAO = /KAKAOTALK/i.test(UA);
+const IN_APP = IS_KAKAO || /NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|Band\/|; wv\)/i.test(UA);
+const IS_ANDROID = /Android/i.test(UA);
+const IS_IOS = /iPhone|iPad|iPod/i.test(UA);
+const IS_MOBILE = IS_ANDROID || IS_IOS;
+
+// 카카오톡 등 앱 안 브라우저 → 휴대폰 기본 브라우저로 같은 프롬프트 화면을 연다
+function openExternal(it){
+  const url = location.origin + location.pathname + (it ? '#' + it.id : '');
+  if(IS_KAKAO){ location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return; }
+  if(IS_ANDROID){ location.href = 'intent://' + url.replace(/^https?:\/\//,'') + '#Intent;scheme=https;package=com.android.chrome;end'; return; }
+  copyText(url,true);
+  toast('주소를 복사했어요.<br>사파리나 크롬 주소창에 붙여넣어 열어 주세요', 3600);
+}
+function showFallback(text, it, withImage){
+  const msg = IN_APP
+    ? '카카오톡·네이버 같은 앱 안에서 열면 공유창이 뜨지 않아요. <b>외부 브라우저로 열기</b>를 누른 뒤 다시 <b>프롬프트 공유</b>를 눌러 주세요.'
+    : '이 브라우저는 공유창을 지원하지 않아요. 아래 방법 중 하나를 골라 주세요.';
+  $('#fbMsg').innerHTML = msg;
+  const btns = [];
+  if(IN_APP) btns.push('<button class="btn go" data-fb="ext">🌐 외부 브라우저로 열기</button>');
+  if(IS_MOBILE) btns.push('<button class="btn" data-fb="sms">✉️ 문자로 보내기</button>');
+  if(withImage) btns.push('<button class="btn" data-fb="img">⬇ 이미지 저장</button>');
+  btns.push('<button class="btn" data-fb="copy">📋 프롬프트 복사</button>');
+  $('#fbBtns').innerHTML = btns.join('');
+  $('#fbBtns').onclick = e=>{
+    const b = e.target.closest('[data-fb]'); if(!b) return;
+    const k = b.dataset.fb;
+    if(k==='ext') return openExternal(it);
+    if(k==='sms'){ location.href = 'sms:' + (IS_IOS ? '&' : '?') + 'body=' + encodeURIComponent(text); return; }
+    if(k==='img'){ saveImage(it); toast('이미지를 저장했어요'); return; }
+    if(k==='copy'){ copyText(text); closeFallback(); }
+  };
+  $('#fb').classList.add('open');
+}
+function closeFallback(){ $('#fb').classList.remove('open'); }
+$('#fbClose').onclick = closeFallback;
+$('#fb').addEventListener('click', e=>{ if(e.target.id==='fb') closeFallback(); });
+
+// 프롬프트 공유: 휴대폰 공유창으로 프롬프트 글만 보낸다 (주소·링크 없음, 클립보드 복사 안 함)
+async function shareText(text, it){
+  if(navigator.share && !IN_APP){
     try{ await navigator.share({ text }); return; }
     catch(e){ if(e && e.name==='AbortError') return; }
   }
-  await copyText(text,true);
-  toast('이 기기는 바로 공유가 안 돼서 <b>복사</b>해 두었어요.<br>카카오톡에 붙여넣기 하세요', 3200);
+  showFallback(text, it, false);
 }
 const blobCache = new Map();
 function prefetch(it){
@@ -223,6 +281,7 @@ function prefetch(it){
 }
 async function shareImage(it){
   const text = allText(it);
+  if(IN_APP || !navigator.share) return showFallback(text, it, true);
   copyText(text,true);                      // 카톡이 글을 빼먹어도 붙여넣기 가능하도록
   let file = blobCache.get(it.id);
   if(!(file instanceof File)) file = await prefetch(it);
@@ -233,8 +292,7 @@ async function shareImage(it){
       return;
     }catch(e){ if(e && e.name==='AbortError') return; }
   }
-  saveImage(it);
-  toast('이미지를 저장하고 프롬프트를 복사했어요.<br>카카오톡에서 사진 첨부 후 붙여넣기 하세요', 3600);
+  showFallback(text, it, true);
 }
 function saveImage(it){
   const a=document.createElement('a'); a.href=img(it); a.download='prompt_'+it.id+'.jpg';
@@ -285,7 +343,7 @@ function render(){
         <button class="fav ${favs.has(d.id)?'on':''}" data-fav aria-label="즐겨찾기">${favs.has(d.id)?'★':'☆'}</button>
       </div>
       <div class="meta" data-open><div class="cat">${CATS[d.c]}</div><div class="ttl">${esc(d.t)}</div></div>
-      <div class="acts"><button class="mini" data-copy>복사</button><button class="mini k" data-share>텍스트 공유</button></div>
+      <div class="acts"><button class="mini" data-copy>복사</button><button class="mini k" data-share>프롬프트 공유</button></div>
     </article>`).join('');
 }
 $('#grid').addEventListener('click',e=>{
@@ -293,7 +351,7 @@ $('#grid').addEventListener('click',e=>{
   const it=state.list[+card.dataset.i];
   if(e.target.closest('[data-fav]')){ toggleFav(it); const b=e.target.closest('[data-fav]'); b.classList.toggle('on',favs.has(it.id)); b.textContent=favs.has(it.id)?'★':'☆'; if(state.fav) apply(false); return; }
   if(e.target.closest('[data-copy]')) return copyText(allText(it));
-  if(e.target.closest('[data-share]')) return shareText(allText(it));
+  if(e.target.closest('[data-share]')) return shareText(allText(it), it);
   if(e.target.closest('[data-open]')) openAt(+card.dataset.i);
 });
 function toggleFav(it){
@@ -318,7 +376,7 @@ function openAt(i){
     <div class="pblock">
       <div class="plabel">${esc(p.l)}</div>
       <div class="ptext">${esc(p.x)}</div>
-      <div class="pbtns"><button class="btn copy" data-k="${k}" data-act="copy">📋 복사하기</button><button class="btn txt" data-k="${k}" data-act="share">💬 텍스트 공유</button></div>
+      <div class="pbtns"><button class="btn copy" data-k="${k}" data-act="copy">📋 복사하기</button><button class="btn txt" data-k="${k}" data-act="share">💬 프롬프트 공유</button></div>
     </div>`).join('');
   $('#prev').disabled = i===0; $('#next').disabled = i===state.list.length-1;
   $('#prev').style.opacity = i===0?.35:1; $('#next').style.opacity = i===state.list.length-1?.35:1;
@@ -339,7 +397,7 @@ $('#sheet').addEventListener('click',e=>{
   if(e.target.closest('[data-close]')) return closeSheet();
   const b=e.target.closest('[data-act]'); if(!b) return;
   const it=state.list[state.idx]; const text=it.p[+b.dataset.k].x;
-  b.dataset.act==='copy'? copyText(text) : shareText(text);
+  b.dataset.act==='copy'? copyText(text) : shareText(text, it);
 });
 $('#prev').onclick=()=>openAt(state.idx-1);
 $('#next').onclick=()=>openAt(state.idx+1);
