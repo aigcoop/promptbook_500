@@ -265,11 +265,12 @@ $('#fb').addEventListener('click', e=>{ if(e.target.id==='fb') closeFallback(); 
 
 // 프롬프트 공유: 휴대폰 공유창으로 프롬프트 글만 보낸다 (주소·링크 없음, 클립보드 복사 안 함)
 async function shareText(text, it){
-  if(navigator.share && !IN_APP){
-    try{ await navigator.share({ text }); return; }
+  const body = '[' + it.t + ']\n' + text;
+  if(navigator.share){
+    try{ await navigator.share({ title: it.t, text: body }); return; }
     catch(e){ if(e && e.name==='AbortError') return; }
   }
-  showFallback(text, it, false);
+  showFallback(body, it, false);
 }
 const blobCache = new Map();
 function prefetch(it){
@@ -280,14 +281,14 @@ function prefetch(it){
   blobCache.set(it.id,p); return p;
 }
 async function shareImage(it){
-  const text = allText(it);
-  if(IN_APP || !navigator.share) return showFallback(text, it, true);
+  const text = '[' + it.t + ']\n' + allText(it);
+  if(!navigator.share) return showFallback(text, it, true);
   copyText(text,true);                      // 카톡이 글을 빼먹어도 붙여넣기 가능하도록
   let file = blobCache.get(it.id);
   if(!(file instanceof File)) file = await prefetch(it);
   if(file && navigator.canShare && navigator.canShare({files:[file]})){
     try{
-      await navigator.share({ files:[file], text });
+      await navigator.share({ files:[file], title: it.t, text });
       toast('📋 프롬프트도 복사돼 있어요.<br>글이 안 갔다면 대화창에 붙여넣기 하세요', 3600);
       return;
     }catch(e){ if(e && e.name==='AbortError') return; }
