@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI 프롬프트북 613</title>
-<meta name="description" content="이미지·영상 생성 프롬프트 613선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
+<title>AI 프롬프트북 713</title>
+<meta name="description" content="이미지·영상 생성 프롬프트 713선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
 <meta name="theme-color" content="#1F1A24">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231F1A24%22/%3E%3Ctext x=%2232%22 y=%2243%22 font-size=%2230%22 text-anchor=%22middle%22 fill=%22%23D9B46A%22 font-family=%22sans-serif%22 font-weight=%22800%22%3EP%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -135,7 +135,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <header class="hero">
   <div class="hero-in">
     <div class="eyebrow">PROMPT BOOK · 교안</div>
-    <h1>AI 프롬프트북 <b>613</b></h1>
+    <h1>AI 프롬프트북 <b>713</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
     <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
   </div>
@@ -209,7 +209,12 @@ const store = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 };
-let favs = new Set(store.get('pb_favs',[]));
+// 권 번호가 한 칸씩 밀린 뒤(새 1권 추가) 예전 즐겨찾기 번호를 새 번호로 옮긴다
+if(!store.get('pb_favs_v2',null)){
+  const old = store.get('pb_favs',[]);
+  store.set('pb_favs_v2', old.map(id=>{ const m=/^(\d+)-(\d+)$/.exec(id); return m ? (+m[1]+1)+'-'+m[2] : id; }));
+}
+let favs = new Set(store.get('pb_favs_v2',[]));
 const state = { book:0, cat:'', q:'', fav:false, list:DATA, idx:-1 };
 const img = it => 'img/' + it.id + '.jpg';
 const label = it => it.b + '권 ' + String(it.n).padStart(3,'0') + '번';
@@ -397,7 +402,7 @@ $('#grid').addEventListener('click',e=>{
 });
 function toggleFav(it){
   favs.has(it.id)? favs.delete(it.id) : favs.add(it.id);
-  store.set('pb_favs',[...favs]);
+  store.set('pb_favs_v2',[...favs]);
   toast(favs.has(it.id)?'★ 즐겨찾기에 담았어요':'즐겨찾기에서 뺐어요',1400);
 }
 
