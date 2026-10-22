@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI 프롬프트북 505</title>
-<meta name="description" content="이미지·영상 생성 프롬프트 505선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
+<title>AI 프롬프트북 613</title>
+<meta name="description" content="이미지·영상 생성 프롬프트 613선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
 <meta name="theme-color" content="#1F1A24">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231F1A24%22/%3E%3Ctext x=%2232%22 y=%2243%22 font-size=%2230%22 text-anchor=%22middle%22 fill=%22%23D9B46A%22 font-family=%22sans-serif%22 font-weight=%22800%22%3EP%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -89,6 +89,17 @@ main{max-width:1180px;margin:0 auto;padding:14px 16px 80px}
 .dcat{display:inline-block;font-size:.78rem;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:999px}
 .dttl{font-size:1.4rem;font-weight:800;margin:8px 0 4px;letter-spacing:-.01em;line-height:1.3}
 .dsub{color:var(--ink2);font-size:.88rem;margin:0 0 14px}
+.refs{border:1.5px dashed #C9B6E2;background:#FAF6FF;border-radius:14px;padding:12px;margin-bottom:14px}
+.refs h4{margin:0;font-size:1rem}
+.refs p{margin:2px 0 10px;font-size:.85rem;color:var(--ink2)}
+.refgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-bottom:10px}
+.refgrid a{display:block;aspect-ratio:1;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative}
+.refgrid img{width:100%;height:100%;object-fit:contain}
+.refgrid span{position:absolute;left:4px;top:4px;background:rgba(31,26,36,.75);color:#fff;font-size:.7rem;font-weight:700;padding:1px 6px;border-radius:999px}
+.refbtns{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:480px){.refbtns{grid-template-columns:2fr 1fr}}
+.btn.ref{background:#3E2A63;color:#fff}
+.rbadge{position:absolute;left:8px;bottom:8px;background:#6A3FA0;color:#fff;font-size:.72rem;font-weight:800;padding:3px 8px;border-radius:999px}
 .pblock{border:1.5px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;background:#fff}
 .plabel{font-size:.8rem;font-weight:800;color:var(--ink2);padding:10px 14px 0;letter-spacing:.04em}
 .ptext{white-space:pre-wrap;padding:8px 14px 14px;font-size:1rem;line-height:1.7;max-height:46vh;overflow-y:auto;user-select:text;-webkit-user-select:text}
@@ -124,7 +135,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <header class="hero">
   <div class="hero-in">
     <div class="eyebrow">PROMPT BOOK · 교안</div>
-    <h1>AI 프롬프트북 <b>505</b></h1>
+    <h1>AI 프롬프트북 <b>613</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
     <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
   </div>
@@ -166,6 +177,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
         <h2 class="dttl" id="dttl"></h2>
         <p class="dsub" id="dsub"></p>
         <div id="pblocks"></div>
+        <div id="refs"></div>
         <div class="bigshare">
           <button class="btn img" id="shareImg">🖼️ 이미지 + 프롬프트 공유</button>
           <button class="btn save" id="saveImg">⬇ 이미지 저장</button>
@@ -246,7 +258,7 @@ function showFallback(text, it, withImage){
   const btns = [];
   if(IN_APP) btns.push('<button class="btn go" data-fb="ext">🌐 외부 브라우저로 열기</button>');
   if(IS_MOBILE) btns.push('<button class="btn" data-fb="sms">✉️ 문자로 보내기</button>');
-  if(withImage) btns.push('<button class="btn" data-fb="img">⬇ 이미지 저장</button>');
+  if(withImage) btns.push('<button class="btn" data-fb="img">⬇ '+(withImage==='refs'?'첨부 이미지 저장':'이미지 저장')+'</button>');
   btns.push('<button class="btn" data-fb="copy">📋 프롬프트 복사</button>');
   $('#fbBtns').innerHTML = btns.join('');
   $('#fbBtns').onclick = e=>{
@@ -254,7 +266,7 @@ function showFallback(text, it, withImage){
     const k = b.dataset.fb;
     if(k==='ext') return openExternal(it);
     if(k==='sms'){ location.href = 'sms:' + (IS_IOS ? '&' : '?') + 'body=' + encodeURIComponent(text); return; }
-    if(k==='img'){ saveImage(it); toast('이미지를 저장했어요'); return; }
+    if(k==='img'){ if(withImage==='refs'){ saveRefs(it); toast('첨부 이미지를 저장했어요'); } else { saveImage(it); toast('이미지를 저장했어요'); } return; }
     if(k==='copy'){ copyText(text); closeFallback(); }
   };
   $('#fb').classList.add('open');
@@ -295,6 +307,33 @@ async function shareImage(it){
   }
   showFallback(text, it, true);
 }
+const refName=(it,k)=>'ref_'+it.id+'-'+(k+1)+(it.r[k].endsWith('.png')?'.png':'.jpg');
+const refCache=new Map();
+function prefetchRefs(it){
+  if(refCache.has(it.id)) return refCache.get(it.id);
+  const p=Promise.all(it.r.map((u,k)=>fetch(u).then(r=>{ if(!r.ok) throw 0; return r.blob(); })
+      .then(b=>new File([b],refName(it,k),{type:u.endsWith('.png')?'image/png':'image/jpeg'}))))
+    .then(fs=>{ refCache.set(it.id,fs); return fs; }).catch(()=>{ refCache.delete(it.id); return null; });
+  refCache.set(it.id,p); return p;
+}
+async function shareRefs(it){
+  const text = '[' + it.t + ']\n' + allText(it);
+  if(!navigator.share) return showFallback(text, it, 'refs');
+  let files = refCache.get(it.id);
+  if(!Array.isArray(files)) files = await prefetchRefs(it);
+  if(files && navigator.canShare && navigator.canShare({files})){
+    copyText(text,true);
+    try{
+      await navigator.share({ files, title: it.t, text });
+      toast('📋 프롬프트도 복사돼 있어요.<br>글이 안 갔다면 대화창에 붙여넣기 하세요', 3600);
+      return;
+    }catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  showFallback(text, it, 'refs');
+}
+function saveRefs(it){
+  it.r.forEach((u,k)=>setTimeout(()=>{ const a=document.createElement('a'); a.href=u; a.download=refName(it,k); document.body.appendChild(a); a.click(); a.remove(); }, k*350));
+}
 function saveImage(it){
   const a=document.createElement('a'); a.href=img(it); a.download='prompt_'+it.id+'.jpg';
   document.body.appendChild(a); a.click(); a.remove();
@@ -304,7 +343,7 @@ function saveImage(it){
 function chip(text,pressed,on){ const b=document.createElement('button'); b.className='chip'; b.textContent=text; b.setAttribute('aria-pressed',pressed); b.onclick=on; return b; }
 function drawChips(){
   const bk=$('#books'); bk.innerHTML='';
-  [0,1,2,3,4,5].forEach(n=>{
+  [0,...[...new Set(DATA.map(d=>d.b))].sort((a,b)=>a-b)].forEach(n=>{
     const c = n? DATA.filter(d=>d.b===n).length : DATA.length;
     bk.appendChild(chip((n? n+'권':'전체')+' '+c, String(state.book===n), ()=>{state.book=n; apply();}));
   });
@@ -320,7 +359,7 @@ function apply(scroll){
     if(state.cat && d.c!==state.cat) return false;
     if(state.fav && !favs.has(d.id)) return false;
     if(terms.length){
-      const hay=(d.t+' '+CATS[d.c]+' '+d.id+' '+d.b+'-'+d.n+' '+d.p.map(p=>p.x).join(' ')).toLowerCase();
+      const hay=(d.t+' '+CATS[d.c]+(d.r?' 첨부 첨부이미지':'')+' '+d.id+' '+d.b+'-'+d.n+' '+d.p.map(p=>p.x).join(' ')).toLowerCase();
       return terms.every(t=>hay.includes(t));
     }
     return true;
@@ -341,6 +380,7 @@ function render(){
         <img src="${img(d)}" alt="${esc(d.t)} 예시 이미지" loading="lazy" decoding="async">
         <span class="no">${d.b}-${String(d.n).padStart(3,'0')}</span>
         ${d.c==='V'?'<span class="vid">영상</span>':''}
+        ${d.r?'<span class="rbadge">📎 첨부 '+d.r.length+'</span>':''}
         <button class="fav ${favs.has(d.id)?'on':''}" data-fav aria-label="즐겨찾기">${favs.has(d.id)?'★':'☆'}</button>
       </div>
       <div class="meta" data-open><div class="cat">${CATS[d.c]}</div><div class="ttl">${esc(d.t)}</div></div>
@@ -379,6 +419,14 @@ function openAt(i){
       <div class="ptext">${esc(p.x)}</div>
       <div class="pbtns"><button class="btn copy" data-k="${k}" data-act="copy">📋 복사하기</button><button class="btn txt" data-k="${k}" data-act="share">💬 프롬프트 공유</button></div>
     </div>`).join('');
+  $('#refs').innerHTML = it.r ? `
+    <div class="refs">
+      <h4>📎 첨부 이미지 ${it.r.length}장</h4>
+      <p>이미지를 만들 때 프롬프트와 함께 이 사진을 올려 주세요. 사진을 누르면 저장돼요.</p>
+      <div class="refgrid">${it.r.map((r,k)=>`<a href="${r}" download="${refName(it,k)}" data-refsave><img src="${r}" alt="첨부 이미지 ${k+1}" loading="lazy"><span>${k+1}</span></a>`).join('')}</div>
+      <div class="refbtns"><button class="btn ref" id="shareRefs">📎 첨부 이미지 + 프롬프트 공유</button><button class="btn save" id="saveRefs">⬇ 모두 저장</button></div>
+    </div>` : '';
+  if(it.r){ $('#shareRefs').onclick=()=>shareRefs(it); $('#saveRefs').onclick=()=>{ saveRefs(it); toast('첨부 이미지 '+it.r.length+'장을 저장했어요'); }; prefetchRefs(it); }
   $('#prev').disabled = i===0; $('#next').disabled = i===state.list.length-1;
   $('#prev').style.opacity = i===0?.35:1; $('#next').style.opacity = i===state.list.length-1?.35:1;
   const sh=$('#sheet'); if(!sh.classList.contains('open')){ sh.classList.add('open'); sh.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; history.pushState({d:1},'' ,'#'+it.id); }
