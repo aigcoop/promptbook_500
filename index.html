@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI 프롬프트북 713</title>
-<meta name="description" content="이미지·영상 생성 프롬프트 713선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
+<title>AI 프롬프트북 913</title>
+<meta name="description" content="이미지·영상 생성 프롬프트 913선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
 <meta name="theme-color" content="#1F1A24">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231F1A24%22/%3E%3Ctext x=%2232%22 y=%2243%22 font-size=%2230%22 text-anchor=%22middle%22 fill=%22%23D9B46A%22 font-family=%22sans-serif%22 font-weight=%22800%22%3EP%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -135,7 +135,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <header class="hero">
   <div class="hero-in">
     <div class="eyebrow">PROMPT BOOK · 교안</div>
-    <h1>AI 프롬프트북 <b>713</b></h1>
+    <h1>AI 프롬프트북 <b>913</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
     <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
   </div>
@@ -364,7 +364,7 @@ function apply(scroll){
     if(state.cat && d.c!==state.cat) return false;
     if(state.fav && !favs.has(d.id)) return false;
     if(terms.length){
-      const hay=(d.t+' '+CATS[d.c]+(d.r?' 첨부 첨부이미지':'')+' '+d.id+' '+d.b+'-'+d.n+' '+d.p.map(p=>p.x).join(' ')).toLowerCase();
+      const hay=(d.t+' '+(d.g||'')+' '+CATS[d.c]+(d.r?' 첨부 첨부이미지':'')+' '+d.id+' '+d.b+'-'+d.n+' '+d.p.map(p=>p.x).join(' ')).toLowerCase();
       return terms.every(t=>hay.includes(t));
     }
     return true;
@@ -388,7 +388,7 @@ function render(){
         ${d.r?'<span class="rbadge">📎 첨부 '+d.r.length+'</span>':''}
         <button class="fav ${favs.has(d.id)?'on':''}" data-fav aria-label="즐겨찾기">${favs.has(d.id)?'★':'☆'}</button>
       </div>
-      <div class="meta" data-open><div class="cat">${CATS[d.c]}</div><div class="ttl">${esc(d.t)}</div></div>
+      <div class="meta" data-open><div class="cat">${d.g?esc(d.g.split(' ·')[0]):CATS[d.c]}</div><div class="ttl">${esc(d.t)}</div></div>
       <div class="acts"><button class="mini" data-copy>복사</button><button class="mini k" data-share>프롬프트 공유</button></div>
     </article>`).join('');
 }
@@ -413,7 +413,7 @@ function openAt(i){
   $('#pn').textContent = it.b+'-'+String(it.n).padStart(3,'0')+'  '+it.t;
   $('#dcat').textContent = CATS[it.c];
   $('#dttl').textContent = it.t;
-  $('#dsub').textContent = label(it)+' · '+(i+1)+' / '+state.list.length;
+  $('#dsub').textContent = label(it)+(it.g?' · '+it.g:'')+' · '+(i+1)+' / '+state.list.length;
   $('#dfav').textContent = favs.has(it.id)?'★':'☆';
   $('#media').innerHTML = it.v
     ? `<video src="${it.v}" poster="${img(it)}" controls playsinline preload="metadata"></video>`
