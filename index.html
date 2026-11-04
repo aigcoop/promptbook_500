@@ -32,6 +32,8 @@ img{display:block;max-width:100%}
 .hero h1 b{color:#D9B46A}
 .hero p{margin:0;color:#CFC6D8;font-size:.95rem}
 .how{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.lmbtn{font-size:.82rem;font-weight:800;padding:5px 12px;border-radius:999px;background:#D9B46A;color:#1F1A24;border:1px solid #D9B46A}
+.lmbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .how span{font-size:.82rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:5px 10px;border-radius:999px;color:#EDE6F3}
 
 /* toolbar */
@@ -165,7 +167,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
     <div class="eyebrow">PROMPT BOOK · 교안</div>
     <h1>AI 프롬프트북 <b>1163</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
-    <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
+    <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span><button type="button" class="lmbtn" id="goLM">제미나이 노트북 LM 디자인 프롬프트 →</button></div>
   </div>
 </header>
 
@@ -509,6 +511,7 @@ setBig(store.get('pb_big',false));
 window.addEventListener('scroll',()=>$('#totop').classList.toggle('show',window.scrollY>900),{passive:true});
 $('#totop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 
+$('#goLM').onclick=()=>{ state.book=12; state.cat=''; state.fav=false; $('#favOnly').setAttribute('aria-pressed','false'); apply(false); const top=$('.bar').offsetTop; window.scrollTo({top,behavior:'smooth'}); setTimeout(()=>{ const c=[...document.querySelectorAll('#books .chip')].find(x=>x.getAttribute('aria-pressed')==='true'); if(c) c.scrollIntoView({inline:'center',block:'nearest'}); },50); };
 apply(false);
 const h=location.hash.slice(1); if(h){ const i=state.list.findIndex(d=>d.id===h); if(i>=0){ history.replaceState(null,'',location.pathname); openAt(i);} }
 };
