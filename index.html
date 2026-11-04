@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI 프롬프트북 1113</title>
+<title>AI 프롬프트북 1163</title>
 <meta name="robots" content="noindex, nofollow, noarchive">
-<meta name="description" content="이미지·영상 생성 프롬프트 1113선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
+<meta name="description" content="이미지·영상 생성 프롬프트 1163선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
 <meta name="theme-color" content="#1F1A24">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231F1A24%22/%3E%3Ctext x=%2232%22 y=%2243%22 font-size=%2230%22 text-anchor=%22middle%22 fill=%22%23D9B46A%22 font-family=%22sans-serif%22 font-weight=%22800%22%3EP%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -151,7 +151,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <div class="lock" id="lock">
   <form class="lockbox" id="lockForm" autocomplete="off">
     <span class="eyebrow">PROMPT BOOK · 교안</span>
-    <h2>AI 프롬프트북 <b>1113</b></h2>
+    <h2>AI 프롬프트북 <b>1163</b></h2>
     <p>수업에서 안내받은 비밀번호를 입력해 주세요.</p>
     <input id="pw" type="password" inputmode="text" autocapitalize="characters" placeholder="비밀번호" aria-label="비밀번호">
     <button id="pwBtn" type="submit">열기</button>
@@ -163,7 +163,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <header class="hero">
   <div class="hero-in">
     <div class="eyebrow">PROMPT BOOK · 교안</div>
-    <h1>AI 프롬프트북 <b>1113</b></h1>
+    <h1>AI 프롬프트북 <b>1163</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
     <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span></div>
   </div>
@@ -230,7 +230,8 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <script src="prompts.enc.js"></script>
 <script>
 window.__startApp = function(DATA){
-const CATS = {P:'인물·화보',C:'캐릭터·일러스트',A:'제품·광고',D:'포스터·디자인',N:'동물·풍경',V:'영상'};
+const CATS = {P:'인물·화보',C:'캐릭터·일러스트',A:'제품·광고',D:'포스터·디자인',N:'동물·풍경',V:'영상',L:'노트북LM 디자인'};
+const BOOKNAME = {12:'노트북LM 디자인'};
 const $ = s => document.querySelector(s);
 const store = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
@@ -244,7 +245,7 @@ if(!store.get('pb_favs_v2',null)){
 let favs = new Set(store.get('pb_favs_v2',[]));
 const state = { book:0, cat:'', q:'', fav:false, list:DATA, idx:-1 };
 const img = it => 'img/' + it.id + '.jpg';
-const label = it => it.b + '권 ' + String(it.n).padStart(3,'0') + '번';
+const label = it => (BOOKNAME[it.b] || it.b + '권') + ' ' + String(it.n).padStart(3,'0') + '번';
 const allText = it => it.p.map(p => it.p.length>1 ? '['+p.l+']\n'+p.x : p.x).join('\n\n');
 
 /* ---------- toast ---------- */
@@ -377,7 +378,7 @@ function drawChips(){
   const bk=$('#books'); bk.innerHTML='';
   [0,...[...new Set(DATA.map(d=>d.b))].sort((a,b)=>a-b)].forEach(n=>{
     const c = n? DATA.filter(d=>d.b===n).length : DATA.length;
-    bk.appendChild(chip((n? n+'권':'전체')+' '+c, String(state.book===n), ()=>{state.book=n; apply();}));
+    bk.appendChild(chip((n? (BOOKNAME[n]||n+'권'):'전체')+' '+c, String(state.book===n), ()=>{state.book=n; apply();}));
   });
   const ct=$('#cats'); ct.innerHTML='';
   ct.appendChild(chip('모든 종류', String(state.cat===''), ()=>{state.cat=''; apply();}));
@@ -410,7 +411,7 @@ function render(){
     <article class="card" data-i="${i}">
       <div class="thumb" data-open>
         <img src="${img(d)}" alt="${esc(d.t)} 예시 이미지" loading="lazy" decoding="async">
-        <span class="no">${d.b}-${String(d.n).padStart(3,'0')}</span>
+        <span class="no">${d.b===12?'LM':d.b}-${String(d.n).padStart(3,'0')}</span>
         ${d.c==='V'?'<span class="vid">영상</span>':''}
         ${d.r?'<span class="rbadge">📎 첨부 '+d.r.length+'</span>':''}
         <button class="fav ${favs.has(d.id)?'on':''}" data-fav aria-label="즐겨찾기">${favs.has(d.id)?'★':'☆'}</button>
@@ -437,7 +438,7 @@ function toggleFav(it){
 function openAt(i){
   if(i<0||i>=state.list.length) return;
   state.idx=i; const it=state.list[i];
-  $('#pn').textContent = it.b+'-'+String(it.n).padStart(3,'0')+'  '+it.t;
+  $('#pn').textContent = (it.b===12?'LM':it.b)+'-'+String(it.n).padStart(3,'0')+'  '+it.t;
   $('#dcat').textContent = CATS[it.c];
   $('#dttl').textContent = it.t;
   $('#dsub').textContent = label(it)+(it.g?' · '+it.g:'')+' · '+(i+1)+' / '+state.list.length;
