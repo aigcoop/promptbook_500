@@ -46,7 +46,7 @@ const DATA=[{"date": "11월 12일 (목)", "theme": "과거로 떠나는 날", "i
 const START=new Date('2026-11-12T00:00:00+09:00');
 const nowKST=new Date(Date.now()+ (9*60+new Date().getTimezoneOffset())*60000);
 const todayIdx=Math.floor((new Date(nowKST.getFullYear(),nowKST.getMonth(),nowKST.getDate())-new Date(2026,10,12))/86400000);
-const REF={'0-0':'img/1112_1.jpg','0-1':'img/1112_2.jpg','0-2':'img/1112_3.jpg','1-0':'img/1113_1.jpg','1-1':'img/1113_2.jpg','1-2':'img/1113_3.jpg'};
+const REF={'0-0':'img/1112_1.jpg','0-1':'img/1112_2.jpg','0-2':'img/1112_3.jpg','1-0':'img/1113_1.jpg','1-1':'img/1113_2.jpg','1-2':'img/1113_3.jpg','2-0':'img/1114_1.jpg','2-1':'img/1114_2.jpg','2-2':'img/1114_3.jpg'};
 const tabs=document.getElementById('tabs'),days=document.getElementById('days');
 const firstOpen=Math.max(0,Math.min(todayIdx,DATA.length-1));
 DATA.forEach((d,i)=>{
