@@ -24,21 +24,23 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 img{display:block;max-width:100%}
 
 /* header */
-.hero{background:var(--ink);color:#F5EFE6;padding:28px 16px 22px;position:relative;overflow:hidden}
+.hero{background:var(--ink);color:#F5EFE6;padding:16px 16px 14px;position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(184,134,47,.45),transparent 70%)}
-.hero-in{max-width:1227px;margin:0 auto;position:relative;z-index:1}
+.hero-in{max-width:1100px;margin:0 auto;position:relative;z-index:1}
 .eyebrow{font-size:.78rem;letter-spacing:.16em;color:#D9B46A;font-weight:700}
-.hero h1{margin:6px 0 4px;font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.2;font-weight:800;letter-spacing:-.02em}
+.hero h1{margin:2px 0 2px;font-size:clamp(1.45rem,4.6vw,2.3rem);line-height:1.2;font-weight:800;letter-spacing:-.02em}
 .hero h1 b{color:#D9B46A}
-.hero p{margin:0;color:#CFC6D8;font-size:.95rem}
-.how{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.lmbtn{font-size:.82rem;font-weight:800;padding:5px 12px;border-radius:999px;background:#D9B46A;color:#1F1A24;border:1px solid #D9B46A}
+.hero p{margin:0;color:#CFC6D8;font-size:.86rem}
+.how{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.lmbtn{font-size:.82rem;font-weight:800;padding:6px 12px;border-radius:999px;background:#D9B46A;color:#1F1A24;border:1px solid #D9B46A}
 .lmbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.how span{font-size:.82rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:5px 10px;border-radius:999px;color:#EDE6F3}
+.mode{display:flex;gap:6px}
+.mode button{font-size:.86rem;font-weight:800;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#EDE6F3}
+.mode button[aria-pressed="true"]{background:#F5EFE6;border-color:#F5EFE6;color:#1F1A24}
 
 /* toolbar */
 .bar{position:sticky;top:0;z-index:20;background:rgba(245,241,234,.94);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
-.bar-in{max-width:1227px;margin:0 auto;padding:10px 16px 8px}
+.bar-in{max-width:1100px;margin:0 auto;padding:10px 16px 8px}
 .row{display:flex;gap:8px;align-items:center}
 .search{flex:1;position:relative}
 .search input{width:100%;font:inherit;font-size:1rem;padding:11px 14px 11px 40px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);outline:none}
@@ -52,13 +54,10 @@ img{display:block;max-width:100%}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .chips.books .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
 .chip .sub{font-weight:500;opacity:.72;margin-left:4px}.chip .n{opacity:.6;margin-left:5px}
-.mode{display:flex;gap:4px;margin-top:10px;background:var(--line);padding:3px;border-radius:12px}
-.mode button{flex:1;padding:8px 6px;border:0;border-radius:9px;background:transparent;font-weight:700;font-size:.93rem;color:var(--ink2)}
-.mode button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
 .count{font-size:.85rem;color:var(--ink2);padding:6px 0 2px}
 
 /* grid */
-main{max-width:1227px;margin:0 auto;padding:14px 16px 80px}
+main{max-width:1100px;margin:0 auto;padding:14px 16px 80px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media(min-width:640px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(min-width:960px){.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}}
@@ -171,7 +170,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
     <div class="eyebrow">PROMPT BOOK · 교안</div>
     <h1>AI 프롬프트북 <b>1227</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
-    <div class="how"><span>① 카드를 눌러 크게 보기</span><span>② 복사하기 · 프롬프트 공유</span><span>③ 이미지+프롬프트 공유</span><button type="button" class="lmbtn" id="goLM">제미나이 노트북 LM 디자인 프롬프트 →</button></div>
+    <div class="how"><div class="mode" id="mode"><button type="button" data-m="book">권별 보기</button><button type="button" data-m="topic">주제별 보기</button></div><button type="button" class="lmbtn" id="goLM">제미나이 노트북 LM 디자인 프롬프트 →</button></div>
   </div>
 </header>
 
@@ -185,7 +184,6 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
       <button class="iconbtn" id="favOnly" aria-pressed="false" title="즐겨찾기만 보기">★</button>
       <button class="iconbtn" id="fontBtn" aria-pressed="false" title="글자 크게">가+</button>
     </div>
-    <div class="mode" id="mode"><button type="button" data-m="book">권별 보기</button><button type="button" data-m="topic">주제별 보기</button></div>
     <div class="chips books" id="books"></div>
     <div class="chips" id="cats"></div>
     <div class="count" id="count"></div>
