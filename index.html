@@ -51,6 +51,10 @@ img{display:block;max-width:100%}
 .chip{flex:none;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:.9rem;font-weight:600;color:var(--ink2)}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .chips.books .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.chip .sub{font-weight:500;opacity:.72;margin-left:4px}.chip .n{opacity:.6;margin-left:5px}
+.mode{display:flex;gap:4px;margin-top:10px;background:var(--line);padding:3px;border-radius:12px}
+.mode button{flex:1;padding:8px 6px;border:0;border-radius:9px;background:transparent;font-weight:700;font-size:.93rem;color:var(--ink2)}
+.mode button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
 .count{font-size:.85rem;color:var(--ink2);padding:6px 0 2px}
 
 /* grid */
@@ -181,6 +185,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
       <button class="iconbtn" id="favOnly" aria-pressed="false" title="즐겨찾기만 보기">★</button>
       <button class="iconbtn" id="fontBtn" aria-pressed="false" title="글자 크게">가+</button>
     </div>
+    <div class="mode" id="mode"><button type="button" data-m="book">권별 보기</button><button type="button" data-m="topic">주제별 보기</button></div>
     <div class="chips books" id="books"></div>
     <div class="chips" id="cats"></div>
     <div class="count" id="count"></div>
@@ -229,11 +234,13 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <div class="toast" id="toast"></div>
 <button class="totop" id="totop" aria-label="맨 위로">↑</button>
 
-<script src="prompts.enc.js?v=1227b"></script>
+<script src="prompts.enc.js?v=1227c"></script>
 <script>
 window.__startApp = function(DATA){
 const CATS = {P:'인물·화보',C:'캐릭터·일러스트',A:'제품·광고',D:'포스터·디자인',N:'동물·풍경',V:'영상',L:'노트북LM 디자인'};
 const BOOKNAME = {99:'노트북LM 디자인'};
+const BOOKSUB = {1:'기본 인물',2:'캐릭터·제품 믹스',3:'인물·뷰티 광고',4:'패션·라이프',5:'스튜디오 화보',6:'감성 스냅',7:'제품 광고·영상',8:'감성 장면 테마',9:'에디토리얼 화보',10:'제품 광고',11:'하이패션·아트',12:'시즌·이벤트'};
+const TOPICS = [['profile','프로필·비즈니스'],['fashion','화보·패션'],['daily','일상·감성'],['travel','여행·풍경 속의 나'],['season','시즌·기념일'],['role','직업·변신'],['group','둘 이상 함께'],['grid','콜라주·그리드'],['product','제품 광고'],['char','캐릭터·일러스트'],['design','디자인·포스터'],['nature','동물·자연'],['video','영상']];
 const $ = s => document.querySelector(s);
 const store = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
@@ -247,7 +254,7 @@ if(!store.get('pb_favs_v2',null)){
 // 노트북LM 탭 번호가 12 → 99로 바뀐 뒤 즐겨찾기 번호를 옮긴다
 if(!store.get('pb_favs_v3',null)) store.set('pb_favs_v3', store.get('pb_favs_v2',[]).map(id=>id.startsWith('12-')?'99-'+id.slice(3):id));
 let favs = new Set(store.get('pb_favs_v3',[]));
-const state = { book:0, cat:'', q:'', fav:false, list:DATA, idx:-1 };
+const state = { book:0, cat:'', topic:'', mode:(store.get('pb_mode','book')==='topic'?'topic':'book'), q:'', fav:false, list:DATA, idx:-1 };
 const img = it => 'img/' + it.id + '.jpg' + (it.iv ? '?v=' + it.iv : '');
 const label = it => (BOOKNAME[it.b] || it.b + '권') + ' ' + String(it.n).padStart(3,'0') + '번';
 const allText = it => it.p.map(p => it.p.length>1 ? '['+p.l+']\n'+p.x : p.x).join('\n\n');
@@ -377,12 +384,21 @@ function saveImage(it){
 }
 
 /* ---------- filters ---------- */
-function chip(text,pressed,on){ const b=document.createElement('button'); b.className='chip'; b.textContent=text; b.setAttribute('aria-pressed',pressed); b.onclick=on; return b; }
+function chip(text,pressed,on,html){ const b=document.createElement('button'); b.className='chip'; if(html) b.innerHTML=html; else b.textContent=text; b.setAttribute('aria-pressed',pressed); b.onclick=on; return b; }
 function drawChips(){
+  document.querySelectorAll('#mode button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===state.mode)));
   const bk=$('#books'); bk.innerHTML='';
+  if(state.mode==='topic'){
+    $('#cats').style.display='none';
+    bk.appendChild(chip('',String(state.topic===''),()=>{state.topic=''; apply();},'모든 주제<span class="n">'+DATA.length+'</span>'));
+    TOPICS.forEach(([k,nm])=>{ const c=DATA.filter(d=>d.tp&&d.tp.includes(k)).length; if(c) bk.appendChild(chip('',String(state.topic===k),()=>{state.topic=k; apply();},esc(nm)+'<span class="n">'+c+'</span>')); });
+    return;
+  }
+  $('#cats').style.display='';
   [0,...[...new Set([...DATA.map(d=>d.b),12])].sort((a,b)=>a-b)].forEach(n=>{
     const c = n? DATA.filter(d=>d.b===n).length : DATA.length;
-    bk.appendChild(chip((n? (BOOKNAME[n]||n+'권'):'전체')+' '+c, String(state.book===n), ()=>{state.book=n; apply();}));
+    const nm = n? (BOOKNAME[n]||n+'권') : '전체';
+    bk.appendChild(chip('', String(state.book===n), ()=>{state.book=n; apply();}, esc(nm)+(BOOKSUB[n]?'<span class="sub">'+esc(BOOKSUB[n])+'</span>':'')+'<span class="n">'+c+'</span>'));
   });
   const ct=$('#cats'); ct.innerHTML='';
   ct.appendChild(chip('모든 종류', String(state.cat===''), ()=>{state.cat=''; apply();}));
@@ -392,11 +408,13 @@ function apply(scroll){
   const q=state.q.trim().toLowerCase().replace(/\s+/g,' ');
   const terms=q? q.split(' '):[];
   state.list = DATA.filter(d=>{
-    if(state.book && d.b!==state.book) return false;
-    if(state.cat && d.c!==state.cat) return false;
+    if(state.mode==='book'){
+      if(state.book && d.b!==state.book) return false;
+      if(state.cat && d.c!==state.cat) return false;
+    } else if(state.topic && !(d.tp&&d.tp.includes(state.topic))) return false;
     if(state.fav && !favs.has(d.id)) return false;
     if(terms.length){
-      const hay=(d.t+' '+(d.g||'')+' '+(d.rn||'')+' '+CATS[d.c]+(d.r?' 첨부 첨부이미지':'')+' '+d.id+' '+d.b+'-'+d.n+' '+d.p.map(p=>p.x).join(' ')).toLowerCase();
+      const hay=(d.t+' '+(d.g||'')+' '+(d.rn||'')+' '+CATS[d.c]+' '+(d.tp||[]).map(k=>(TOPICS.find(t=>t[0]===k)||['',''])[1]).join(' ')+(d.r?' 첨부 첨부이미지':'')+' '+d.id+' '+d.b+'-'+d.n+' '+d.p.map(p=>p.x).join(' ')).toLowerCase();
       return terms.every(t=>hay.includes(t));
     }
     return true;
@@ -513,7 +531,8 @@ setBig(store.get('pb_big',false));
 window.addEventListener('scroll',()=>$('#totop').classList.toggle('show',window.scrollY>900),{passive:true});
 $('#totop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 
-$('#goLM').onclick=()=>{ state.book=99; state.cat=''; state.fav=false; $('#favOnly').setAttribute('aria-pressed','false'); apply(false); const top=$('.bar').offsetTop; window.scrollTo({top,behavior:'smooth'}); setTimeout(()=>{ const c=[...document.querySelectorAll('#books .chip')].find(x=>x.getAttribute('aria-pressed')==='true'); if(c) c.scrollIntoView({inline:'center',block:'nearest'}); },50); };
+document.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{ if(state.mode===b.dataset.m) return; state.mode=b.dataset.m; store.set('pb_mode',state.mode); apply(false); const bk=$('#books'); bk.scrollLeft=0; });
+$('#goLM').onclick=()=>{ state.mode='book'; store.set('pb_mode','book'); state.book=99; state.cat=''; state.fav=false; $('#favOnly').setAttribute('aria-pressed','false'); apply(false); const top=$('.bar').offsetTop; window.scrollTo({top,behavior:'smooth'}); setTimeout(()=>{ const c=[...document.querySelectorAll('#books .chip')].find(x=>x.getAttribute('aria-pressed')==='true'); if(c) c.scrollIntoView({inline:'center',block:'nearest'}); },50); };
 apply(false);
 const h=location.hash.slice(1); if(h){ const i=state.list.findIndex(d=>d.id===h); if(i>=0){ history.replaceState(null,'',location.pathname); openAt(i);} }
 };
