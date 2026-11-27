@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI 프롬프트북 1599</title>
+<title>AI 프롬프트북 1659</title>
 <meta name="robots" content="noindex, nofollow, noarchive">
-<meta name="description" content="이미지·영상 생성 프롬프트 1599선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
+<meta name="description" content="이미지·영상 생성 프롬프트 1659선 교안 — 복사하고 카카오톡으로 바로 공유하세요.">
 <meta name="theme-color" content="#1F1A24">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231F1A24%22/%3E%3Ctext x=%2232%22 y=%2243%22 font-size=%2230%22 text-anchor=%22middle%22 fill=%22%23D9B46A%22 font-family=%22sans-serif%22 font-weight=%22800%22%3EP%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -62,6 +62,10 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px 80px}
 .thumb{position:relative;aspect-ratio:3/4;background:#E9E2D6;overflow:hidden}
 .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .card:hover .thumb img{transform:scale(1.03)}
+.thumb .pair{display:grid;grid-template-columns:1fr 1fr;gap:1px;height:100%}
+.thumb .pair img{object-position:50% 12%}
+.thumb .sex{position:absolute;bottom:0;font-size:10px;letter-spacing:.08em;padding:3px 7px;background:rgba(0,0,0,.5);color:#fff}
+.thumb .sex.f{left:0}.thumb .sex.m{left:50%}
 .no{position:absolute;left:8px;top:8px;background:rgba(31,26,36,.82);color:#fff;font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.02em}
 .vid{position:absolute;right:8px;top:8px;background:#E0413A;color:#fff;font-size:.72rem;font-weight:800;padding:3px 8px;border-radius:999px}
 .fav{position:absolute;right:6px;bottom:6px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;font-size:1.1rem;color:#B9AEC4}
@@ -88,6 +92,9 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px 80px}
 .media{background:#EFE8DC;border-radius:14px;overflow:hidden;display:grid;place-items:center}
 @media(min-width:900px){.media{position:sticky;top:80px}}
 .media img,.media video{width:100%;max-height:56vh;object-fit:contain}
+.media .duo{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%}
+.media .duo figure{margin:0;position:relative}
+.media .duo figcaption{position:absolute;left:0;bottom:0;font-size:12px;padding:4px 9px;background:rgba(0,0,0,.5);color:#fff}
 @media(min-width:900px){.media img,.media video{max-height:72vh}}
 .dcat{display:inline-block;font-size:.78rem;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:999px}
 .dttl{font-size:1.4rem;font-weight:800;margin:8px 0 4px;letter-spacing:-.01em;line-height:1.3}
@@ -153,7 +160,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <div class="lock" id="lock">
   <form class="lockbox" id="lockForm" autocomplete="off">
     <span class="eyebrow">PROMPT BOOK · 교안</span>
-    <h2>AI 프롬프트북 <b>1599</b></h2>
+    <h2>AI 프롬프트북 <b>1659</b></h2>
     <p>수업에서 안내받은 비밀번호를 입력해 주세요.</p>
     <input id="pw" type="password" inputmode="text" autocapitalize="characters" placeholder="비밀번호" aria-label="비밀번호">
     <button id="pwBtn" type="submit">열기</button>
@@ -165,7 +172,7 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <header class="hero">
   <div class="hero-in">
     <div class="eyebrow">PROMPT BOOK · 교안</div>
-    <h1>AI 프롬프트북 <b>1599</b></h1>
+    <h1>AI 프롬프트북 <b>1659</b></h1>
     <p>이미지·영상 생성 프롬프트를 골라 바로 복사하고, 카카오톡으로 보내 보세요.</p>
     <div class="how"><button type="button" class="lmbtn" id="goLM">제미나이 노트북 LM 디자인 프롬프트 →</button></div>
   </div>
@@ -229,12 +236,12 @@ footer{text-align:center;color:var(--ink2);font-size:.8rem;padding:10px 16px 30p
 <div class="toast" id="toast"></div>
 <button class="totop" id="totop" aria-label="맨 위로">↑</button>
 
-<script src="prompts.enc.js?v=1599v785234"></script>
+<script src="prompts.enc.js?v=1659r1"></script>
 <script>
 window.__startApp = function(DATA){
 const CATS = {P:'인물·화보',C:'캐릭터·일러스트',A:'제품·광고',D:'포스터·디자인',N:'동물·풍경',V:'영상',L:'노트북LM 디자인'};
 const BOOKNAME = {99:'노트북LM 디자인'};
-const BOOKSUB = {1:'기본 인물',2:'캐릭터·제품 믹스',3:'인물·뷰티 광고',4:'패션·라이프',5:'스튜디오 화보',6:'감성 스냅',7:'제품 광고·영상',8:'감성 장면 테마',9:'에디토리얼 화보',10:'제품 광고',11:'캐릭터·동물+제품',12:'사람+제품',13:'하이패션·아트',14:'시즌·이벤트',15:'비즈니스 프로필'};
+const BOOKSUB = {1:'기본 인물',2:'캐릭터·제품 믹스',3:'인물·뷰티 광고',4:'패션·라이프',5:'스튜디오 화보',6:'감성 스냅',7:'제품 광고·영상',8:'감성 장면 테마',9:'에디토리얼 화보',10:'제품 광고',11:'캐릭터·동물+제품',12:'사람+제품',13:'하이패션·아트',14:'시즌·이벤트',15:'비즈니스 프로필',16:'왕실 드레스·예복'};
 const TOPICS = [['profile','프로필·비즈니스'],['fashion','화보·패션'],['hanbok','한복·전통'],['daily','일상·감성'],['travel','여행·풍경 속의 나'],['season','시즌·기념일'],['role','직업·변신'],['group','둘 이상 함께'],['grid','콜라주·그리드'],['product','제품 광고'],['char','캐릭터·일러스트'],['design','디자인·포스터'],['nature','동물·자연'],['video','영상'],['lm','노트북LM 디자인']];
 const $ = s => document.querySelector(s);
 const store = {
@@ -253,6 +260,7 @@ if(!store.get('pb_favs_v4',null)) store.set('pb_favs_v4', store.get('pb_favs_v3'
 let favs = new Set(store.get('pb_favs_v4',[]));
 const state = { book:0, cat:'', topic:'', mode:(store.get('pb_mode','book')==='topic'?'topic':'book'), q:'', fav:false, list:DATA, idx:-1 };
 const img = it => 'img/' + it.id + '.jpg' + (it.iv ? '?v=' + it.iv : '');
+const img2 = it => it.i2 + (it.iv ? '?v=' + it.iv : '');
 const label = it => (BOOKNAME[it.b] || it.b + '권') + ' ' + String(it.n).padStart(3,'0') + '번';
 const allText = it => it.p.map(p => it.p.length>1 ? '['+p.l+']\n'+p.x : p.x).join('\n\n');
 
@@ -333,15 +341,27 @@ function prefetch(it){
     .catch(()=>{ blobCache.delete(it.id); return null; });
   blobCache.set(it.id,p); return p;
 }
+// 여성·남성 두 장이 한 번호에 있을 때 둘째(남성) 이미지
+function prefetch2(it){
+  if(!it.i2) return Promise.resolve(null);
+  const k=it.id+'m';
+  if(blobCache.has(k)) return blobCache.get(k);
+  const p = fetch(img2(it)).then(r=>{ if(!r.ok) throw 0; return r.blob(); })
+    .then(b=>{ const f=new File([b], 'prompt_'+k+'.jpg', {type:'image/jpeg'}); blobCache.set(k,f); return f; })
+    .catch(()=>{ blobCache.delete(k); return null; });
+  blobCache.set(k,p); return p;
+}
 async function shareImage(it){
   const text = '[' + it.t + ']\n' + allText(it);
   if(!navigator.share) return showFallback(text, it, true);
   copyText(text,true);                      // 카톡이 글을 빼먹어도 붙여넣기 가능하도록
   let file = blobCache.get(it.id);
   if(!(file instanceof File)) file = await prefetch(it);
-  if(file && navigator.canShare && navigator.canShare({files:[file]})){
+  const file2 = it.i2 ? await prefetch2(it) : null;
+  const files = file2 ? [file, file2] : [file];
+  if(file && navigator.canShare && navigator.canShare({files})){
     try{
-      await navigator.share({ files:[file], title: it.t, text });
+      await navigator.share({ files, title: it.t, text });
       toast('📋 프롬프트도 복사돼 있어요.<br>글이 안 갔다면 대화창에 붙여넣기 하세요', 3600);
       return;
     }catch(e){ if(e && e.name==='AbortError') return; }
@@ -378,6 +398,7 @@ function saveRefs(it){
 function saveImage(it){
   const a=document.createElement('a'); a.href=img(it); a.download='prompt_'+it.id+'.jpg';
   document.body.appendChild(a); a.click(); a.remove();
+  if(it.i2) setTimeout(()=>{ const b=document.createElement('a'); b.href=img2(it); b.download='prompt_'+it.id+'m.jpg'; document.body.appendChild(b); b.click(); b.remove(); }, 350);
 }
 
 /* ---------- filters ---------- */
@@ -420,7 +441,7 @@ function render(){
   g.innerHTML = state.list.map((d,i)=>`
     <article class="card" data-i="${i}">
       <div class="thumb" data-open>
-        <img src="${img(d)}" alt="${esc(d.t)} 예시 이미지" loading="lazy" decoding="async">
+        ${d.i2?`<div class="pair"><img src="${img(d)}" alt="${esc(d.t)} 여성 예시 이미지" loading="lazy" decoding="async"><img src="${img2(d)}" alt="${esc(d.t)} 남성 예시 이미지" loading="lazy" decoding="async"></div><span class="sex f">여성</span><span class="sex m">남성</span>`:`<img src="${img(d)}" alt="${esc(d.t)} 예시 이미지" loading="lazy" decoding="async">`}
         <span class="no">${d.b===99?'LM':d.b}-${String(d.n).padStart(3,'0')}</span>
         ${d.c==='V'?'<span class="vid">영상</span>':''}
         ${d.r?'<span class="rbadge">📎 첨부 '+d.r.length+'</span>':''}
@@ -455,6 +476,7 @@ function openAt(i){
   $('#dfav').textContent = favs.has(it.id)?'★':'☆';
   $('#media').innerHTML = it.v
     ? `<video src="${it.v}" poster="${img(it)}" controls playsinline preload="metadata"></video>`
+    : it.i2 ? `<div class="duo"><figure><img src="${img(it)}" alt="${esc(it.t)} 여성 예시 이미지"><figcaption>여성</figcaption></figure><figure><img src="${img2(it)}" alt="${esc(it.t)} 남성 예시 이미지"><figcaption>남성</figcaption></figure></div>`
     : `<img src="${img(it)}" alt="${esc(it.t)} 예시 이미지">`;
   $('#pblocks').innerHTML = it.p.map((p,k)=>`
     <div class="pblock">
@@ -475,7 +497,7 @@ function openAt(i){
   const sh=$('#sheet'); if(!sh.classList.contains('open')){ sh.classList.add('open'); sh.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; history.pushState({d:1},'' ,'#'+it.id); }
   else history.replaceState({d:1},'','#'+it.id);
   $('#panel').scrollTop=0;
-  prefetch(it);
+  prefetch(it); prefetch2(it);
 }
 function closeSheet(fromPop){
   const sh=$('#sheet'); if(!sh.classList.contains('open')) return;
